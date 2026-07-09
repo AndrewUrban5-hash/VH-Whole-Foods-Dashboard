@@ -1,0 +1,120 @@
+﻿Territory,Sub_Territory,Account,Store_Name,Address,City,State,ZIP,Monthly_Visit_Freq,Monthly_Visit_Cost
+MW,MW (Minnesota),Kowalskis,Kowalskis Market Edina Market,324 Southdale Ctr,Edina,MN,55435,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Eden Prairie Market,16500 West 78th Street,Eden Prairie,MN,55346,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Excelsior Market & Wine Shop,440 Water Street,Excelsior,MN,55331,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Grand Avenue Market & Wine Shop,1261 Grand Avenue,Saint Paul,MN,55105,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Lyndale Market,5327 Lyndale Avenue South,Minneapolis,MN,55419,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Oak Park Heights Market & Wine Shop,5801 Neal Avenue North,Oak Park Heights,MN,55082,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Parkview Market,5615 Chicago Avenue South,Minneapolis,MN,55417,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Shoreview Market & Wine Shop,441 Highway 96 West,Shoreview,MN,55126,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Uptown Market & Wine Shop,2440 Hennepin Avenue,Minneapolis,MN,55405,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets White Bear Lake Market,4391 South Lake Avenue,White Bear Lake,MN,55110,3,53.25
+MW,MW (Minnesota),Kowalskis,Kowalskis Markets Woodbury Market & Wine Shop,8505 Valley Creek Road,Woodbury,MN,55125,3,53.25
+NorCal,NorCal (East Bay),Indies,Berkeley Bowl Heinz Ave,920 Heinz Ave,Berkeley,CA,94710,2,35.5
+NorCal,NorCal (East Bay),Indies,Berkeley Bowl Oregon St,2020 Oregon St,Berkeley,CA,94703,2,35.5
+NorCal,NorCal (East Bay),Indies,Castro Valley Natural Grocery,3295 Castro Valley Blvd,Castro Valley,CA,94546,2,35.5
+NorCal,NorCal (East Bay),Indies,Diablo Foods,3615 Mount Diablo Blvd,Lafayette,CA,94549,2,35.5
+NorCal,NorCal (East Bay),Indies,Farmer Joe's,3426 Fruitvale Ave,Oakland,CA,94602,2,35.5
+NorCal,NorCal (East Bay),Indies,Farmer Joe's MacArthur Blvd,3501 MacArthur Blvd,Oakland,CA,94619,2,35.5
+NorCal,NorCal (East Bay),Indies,Piedmont Grocery Co,4038 Piedmont Ave,Oakland,CA,94611,2,35.5
+NorCal,NorCal (East Bay),Indies,Village Market - Oakland,5885 Broadway Terrace,Oakland,CA,94618,2,35.5
+NorCal,NorCal (North Bay),Nugget Market,Nugget Market Corte Madera,5627 Paradise Drive,Corte Madera,CA,94925,2,35.5
+NorCal,NorCal (North Bay),Nugget Market,Nugget Market Novato,470 Ignacio Blvd.,Novato,CA,94949,2,35.5
+NorCal,NorCal (North Bay),Nugget Market,Nugget Market Tiburon,1 Blackfield Drive,Tiburon,CA,94920,2,35.5
+NorCal,NorCal (North Bay),Nugget Market,Sonoma Market (Nugget Market),500 West Napa Street,Sonoma,CA,95476,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Davis, Covell Blvd",1414 East Covell Blvd.,Davis,CA,95616,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Davis, Mace Blvd",409 Mace Blvd.,Davis,CA,95618,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,Nugget Market Elk Grove,7101 Elk Grove Blvd.,Elk Grove,CA,95758,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Fork Lift, Cameron Park",3333 Coach Lane,Cameron Park,CA,95682,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Roseville, Blue Oaks Blvd",1509 Blue Oaks Blvd.,Roseville,CA,95747,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Roseville, Pleasant Grove Blvd",771 Pleasant Grove Blvd.,Roseville,CA,95678,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,"Nugget Market Sacramento, Florin Rd",1040 Florin Road,Sacramento,CA,95831,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,Nugget Market El Dorado Hills,4500 Post Street,El Dorado Hills,CA,95762,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,Nugget Market Vacaville,130 Browns Valley Pkwy,Vacaville,CA,95688,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,Nugget Market West Sacramento,2000 Town Center Plaza,West Sacramento,CA,95691,2,35.5
+NorCal,NorCal (Sacramento),Nugget Market,Nugget Market Woodland,157 Main Street,Woodland,CA,95695,2,35.5
+PacNW,PacNW (Portland),New Seasons,New Seasons Arbor Lodge #43,6400 North Interstate Avenue,Portland,OR,97217,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Cedar Hills #199,3495 Southwest Cedar Hills Boulevard,Beaverton,OR,97005,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Concordia #273,5320 Northeast 33rd Avenue,Portland,OR,97211,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Fisher's Landing #263,2100b Southeast 164th Avenue,Vancouver,WA,98683,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Grant Park #275,3210 Northeast Broadway Street,Portland,OR,97232,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Happy Valley #277,15861 Southeast Happy Valley Town Center Drive,Happy Valley,OR,97086,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Hawthorne #279,4034 Southeast Hawthorne Boulevard,Portland,OR,97214,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Main Street,1506 Main St,Vancouver,WA,98660,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Milwaukie,10830 SE Oak St,Milwaukie,OR,97222,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Mountain Park #296,3 Monroe Parkway,Lake Oswego,OR,97035,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Nyberg Rivers #298,7703 Southwest Nyberg Street,Tualatin,OR,97062,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Orenco Station #300,1453 Northeast 61st Avenue,Hillsboro,OR,97124,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Palisades,1377 McVey Ave,Lake Oswego,OR,97034,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Progress Ridge #302,14805 Southwest Barrows Road,Beaverton,OR,97007,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Raleigh Hills #304,7300 Southwest Beaverton Hillsdale Highway,Portland,OR,97225,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Sellwood #308,1214 Southeast Tacoma Street,Portland,OR,97202,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Seven Corners #310,1954 Southeast Division Street,Portland,OR,97202,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Slabtown #312,2170 Northwest Raleigh Street,Portland,OR,97210,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Tanasbourne,10940 NE Evergreen Pkwy,Hillsboro,OR,97006,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons University Park #3262,6300 North Lombard Street,Portland,OR,97203,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Williams #27,3445 North Williams Avenue,Portland,OR,97227,3,53.25
+PacNW,PacNW (Portland),New Seasons,New Seasons Woodstock #314,4500 Southeast Woodstock Boulevard,Portland,OR,97206,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Mulholland (Woodland Hills) #25246,23379 Mulholland Dr.,Woodland Hills,CA,91364,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Santa Barbra,3855 State St,Santa Barbara,CA,93105,1,17.75
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms South Pasadena #25257,606 Fair Oaks Ave.,South Pasadena,CA,91030,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Hollywood #25239,7880 Sunset Blvd.,Los Angeles,CA,90046,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Manhattan Beach #25244,1570 Rosecrans Ave.,Manhattan Beach,CA,90266,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Rolling Hills #25253,837 Silver Spur Rd.,Rolling Hills Estates,CA,90274,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Santa Monica #25255,3105 Wilshire Blvd.,Santa Monica,CA,90403,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms West Hollywood #25259,9039 Beverly Blvd.,West Hollywood,CA,90048,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Westchester #25261,8448 Lincoln Blvd.,Westchester,CA,90045,3,53.25
+SoPac,SoPac (LA),Bristol Farms,Bristol Farms Westwood #25263,1515 Westwood Blvd.,Los Angeles,CA,90024,3,53.25
+SoPac,SoPac (LA),Lazy Acres,Lazy Acres Los Feliz,1841 N Western Ave,Los Angeles,CA,90027,3,53.25
+SoPac,SoPac (LA),Lazy Acres,Lazy Acres Natural Market Hermosa Beach,2516 Pacific Coast Highway,Hermosa Beach,CA,90254,3,53.25
+SoPac,SoPac (LA),Lazy Acres,Lazy Acres Santa Barbara,302 Meigs Road,Santa Barbara,CA,93109,1,17.75
+SoPac,SoPac (LA),WFM,WFM Arroyo #10237,465 S Arroyo Pkwy,Pasadena,CA,91105,3,53.25
+SoPac,SoPac (LA),WFM,WFM Beverly Hills #10022,239 N Crescent Dr,Beverly Hills,CA,90210,3,53.25
+SoPac,SoPac (LA),WFM,WFM Brentwood #10074,11737 San Vicente Blvd,Los Angeles,CA,90049,3,53.25
+SoPac,SoPac (LA),WFM,WFM Burbank #10545,3401 W Olive Ave,Burbank,CA,91505,3,53.25
+SoPac,SoPac (LA),WFM,WFM Culver City,3377 La Cienega Blvd,Los Angeles,CA,90016,3,53.25
+SoPac,SoPac (LA),WFM,WFM Downtown Los Angeles #10546,788 S Grand Ave,Los Angeles,CA,90017,3,53.25
+SoPac,SoPac (LA),WFM,WFM Fairfax #10177,6350 W 3rd St,Los Angeles,CA,90036,3,53.25
+SoPac,SoPac (LA),WFM,WFM Glendale #10179,331 N Glendale Ave,Glendale,CA,91206,3,53.25
+SoPac,SoPac (LA),WFM,WFM Malibu #10441,23401 Civic Center Way,Malibu,CA,90265,3,53.25
+SoPac,SoPac (LA),WFM,WFM Montana Avenue #10398,1425 Montana Ave,Santa Monica,CA,90403,3,53.25
+SoPac,SoPac (LA),WFM,WFM Oxnard #10318,650 Town Center Dr,Oxnard,CA,93036,3,53.25
+SoPac,SoPac (LA),WFM,WFM Pacific Coast Highway #10225,760 S Sepulveda Blvd,El Segundo,CA,90245,3,53.25
+SoPac,SoPac (LA),WFM,WFM Pasadena #10108,3751 E Foothill Blvd,Pasadena,CA,91107,3,53.25
+SoPac,SoPac (LA),WFM,WFM Playa Vista #10536,12746 W Jefferson Blvd,Playa Vista,CA,90094,3,53.25
+SoPac,SoPac (LA),WFM,WFM Porter Ranch #10695,20209 W Rinaldi St,Porter Ranch,CA,91326,3,53.25
+SoPac,SoPac (LA),WFM,WFM Redondo Beach #10024,405 N Pacific Coast Hwy,Redondo Beach,CA,90277,3,53.25
+SoPac,SoPac (LA),WFM,WFM Santa Barbara #10255,3761 State St,Santa Barbara,CA,93105,1,17.75
+SoPac,SoPac (LA),WFM,WFM Santa Monica #10173,2201 Wilshire Blvd,Santa Monica,CA,90403,3,53.25
+SoPac,SoPac (LA),WFM,WFM Santa Monica Pico #10653,2121 Cloverfield Blvd,Santa Monica,CA,90404,3,53.25
+SoPac,SoPac (LA),WFM,WFM Sherman Oaks #10671,14311 Ventura Blvd,Sherman Oaks,CA,91423,3,53.25
+SoPac,SoPac (LA),WFM,WFM Sherman Oaks East #10020,12905 Riverside Dr,Los Angeles,CA,91423,3,53.25
+SoPac,SoPac (LA),WFM,WFM Sherman Oaks West #10038,4520 N Sepulveda Blvd,Sherman Oaks,CA,91403,3,53.25
+SoPac,SoPac (LA),WFM,WFM Silver Lake #10658,2520 Glendale Blvd,Los Angeles,CA,90039,3,53.25
+SoPac,SoPac (LA),WFM,WFM Thousand Oaks #10204,740 North Moorpark Rd,Thousand Oaks,CA,91360,3,53.25
+SoPac,SoPac (LA),WFM,WFM Torrance #10105,2655 Pacific Coast Hwy,Torrance,CA,90505,3,53.25
+SoPac,SoPac (LA),WFM,WFM Valencia #10178,24130 Valencia Blvd,Santa Clarita,CA,91355,3,53.25
+SoPac,SoPac (LA),WFM,WFM Venice #10333,225 Lincoln Blvd,Venice,CA,90291,3,53.25
+SoPac,SoPac (LA),WFM,WFM West Hollywood #10109,7871 Santa Monica Blvd,West Hollywood,CA,90046,3,53.25
+SoPac,SoPac (LA),WFM,WFM West Los Angeles #10045,11666 National Blvd,Los Angeles,CA,90064,3,53.25
+SoPac,SoPac (LA),WFM,WFM Westwood #10176,1050 S Gayley Ave,Los Angeles,CA,90024,3,53.25
+SoPac,SoPac (LA),WFM,WFM Woodland Hills #10099,21347 Ventura Blvd,Woodland Hills,CA,91364,3,53.25
+SoPac,SoPac (OC),Bristol Farms,Bristol Farms Yorba Linda #25265,18421 Yorba Linda Blvd.,Yorba Linda,CA,92886,3,53.25
+SoPac,SoPac (OC),Bristol Farms,Bristol Farms Newport Beach #25248,810 Avocado Ave.,Newport Beach,CA,92660,3,53.25
+SoPac,SoPac (OC),Lazy Acres,Lazy Acres Market Long Beach,2080 N Bellflower Blvd,Long Beach,CA,90815,3,53.25
+SoPac,SoPac (OC),WFM,WFM Brea #10594,3301 E Imperial Hwy,Brea,CA,92823,3,53.25
+SoPac,SoPac (OC),WFM,WFM Brookhurst #10768,10081 Adams Ave,Huntington Beach,CA,92646,3,53.25
+SoPac,SoPac (OC),WFM,WFM Huntington Beach #10399,"7881 Edinger Ave, Suite 150",Huntington Beach,CA,92647,3,53.25
+SoPac,SoPac (OC),WFM,WFM Irvine #10614,8525 Irvine Center Dr,Irvine,CA,92618,3,53.25
+SoPac,SoPac (OC),WFM,WFM Jamboree #10231,2847 Park Ave,Tustin,CA,92782,3,53.25
+SoPac,SoPac (OC),WFM,WFM Laguna Beach #10406,283 Broadway St,Laguna Beach,CA,92651,3,53.25
+SoPac,SoPac (OC),WFM,WFM Laguna Niguel #10437,23932 Aliso Creek Rd,Laguna Niguel,CA,92677,3,53.25
+SoPac,SoPac (OC),WFM,WFM Long Beach #10701,"6400 E Pacific Coast Hwy, Ste A-100",Long Beach,CA,90803,3,53.25
+SoPac,SoPac (OC),WFM,WFM Long Beach Lakewood #10688,3881 N Lakewood Blvd,Long Beach,CA,90846,3,53.25
+SoPac,SoPac (OC),WFM,WFM Newport Beach #10468,415 Newport Center Dr,Newport Beach,CA,92660,3,53.25
+SoPac,SoPac (OC),WFM,WFM Upland #10676,2153 W Baseline Rd,Upland,CA,91784,3,53.25
+SoPac,SoPac (SD),Lazy Acres,Lazy Acres Encinitas,150 Encinitas Blvd,Encinitas,CA,92024,3,53.25
+SoPac,SoPac (SD),Lazy Acres,Lazy Acres Mission Hills,422 West Washington Street,San Diego,CA,92103,3,53.25
+SoPac,SoPac (SD),WFM,WFM Del Mar #10434,"2600 Via De La Valle, Ste 100",Del Mar,CA,92014,4,71
+SoPac,SoPac (SD),WFM,WFM Hillcrest #10072,711 University Ave,San Diego,CA,92103,4,71
+SoPac,SoPac (SD),WFM,WFM La Jolla #10066,8825 Villa La Jolla Dr,La Jolla,CA,92037,4,71
