@@ -48,7 +48,8 @@ st.markdown(f"""
 
   .kpi-card {{ background:{C_WHITE}; border-radius:8px; padding:20px 16px;
                border-top:4px solid {C_YELLOW}; box-shadow:0 2px 6px rgba(0,0,0,.09);
-               height:100%; text-align:center; overflow-wrap:anywhere; }}
+               height:100%; min-height:210px; text-align:center; overflow-wrap:anywhere;
+               display:flex; flex-direction:column; justify-content:center; }}
   .kpi-row  {{ background:{C_LGRAY}; border-radius:10px; padding:16px 12px; margin-bottom:1rem; }}
   .kpi-lbl  {{ font-size:12px; font-weight:700; color:#888; text-transform:uppercase;
                letter-spacing:.5px; margin-bottom:8px; }}
