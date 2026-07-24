@@ -112,11 +112,12 @@ def load_data():
 
     # Store dims (rebuilt from WFM master store list + UNFI DC mapping)
     stores_sub = stores[["Store_Number", "WFM_Region", "UNFI_DC", "UNFI_Region",
-                         "Status", "State", "City"]].drop_duplicates("Store_Number")
+                         "Status", "State", "City", "Wire_Rack"]].drop_duplicates("Store_Number")
     sales["Store Number"] = pd.to_numeric(sales["Store Number"], errors="coerce")
     sales = sales.merge(stores_sub, left_on="Store Number",
                         right_on="Store_Number", how="left")
     sales["UNFI_DC"] = sales["UNFI_DC"].fillna("Unmapped")
+    sales["Wire_Rack"] = sales["Wire_Rack"].fillna("No")
 
     # Merchandiser flags — Final Touch by store name, Basemakers by store number / name
     ft_names = set(broker[broker["Broker"] == "Final Touch"]["Location_Name"]
@@ -264,10 +265,25 @@ def render_filter_panel(container, prefix, show_comparison=False):
             key=f"{prefix}_merch")
         sel["chan"] = st.selectbox("Channel", ["All", "In-Store", "Online"],
                                    key=f"{prefix}_chan")
+        sel["rack"] = st.selectbox("Rack Placement", ["All", "Yes", "No"],
+                                   key=f"{prefix}_rack")
         if show_comparison:
             st.markdown("---")
             sel["compare"] = st.radio("Compare vs", ["Prior Period", "Prior Year"],
                                       key=f"{prefix}_compare", horizontal=False)
+        st.markdown(
+            '<div style="font-size:11px;color:#888;font-style:italic;'
+            'line-height:1.5;margin-top:14px">'
+            '<b>How metrics are calculated:</b><br>'
+            'OOS Rate = % of store/item combinations with 0 units sold in the '
+            'selected period.<br>'
+            'Weeks Since Sale = weeks since the last recorded unit sale for that '
+            'store/item (shown as "OOS" if it never sold in the data).<br>'
+            '&gt; 2 Wks Since Sale flags an item as stale.<br>'
+            'Unit / Dollar Velocity = units (or net $) per selling store / SKU / '
+            'week.<br>'
+            'YoY % = current units vs. the same weeks last year (LY columns).'
+            '</div>', unsafe_allow_html=True)
     return sel
 
 def apply_filters(df, sel, include_weeks=True):
@@ -289,6 +305,8 @@ def apply_filters(df, sel, include_weeks=True):
         d = d[d["Merchandiser"] == sel["merch"]]
     if sel["chan"] != "All":
         d = d[d["Channel Type"] == sel["chan"]]
+    if sel.get("rack", "All") != "All":
+        d = d[d["Wire_Rack"] == sel["rack"]]
     return d
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
@@ -503,7 +521,7 @@ with tab1:
         st.markdown('<div class="sec-hdr">Store Performance</div>', unsafe_allow_html=True)
 
         pivot_raw = (filt.groupby(["Store Name", "Item Description", "Region",
-                                   "Merchandiser", "UNFI_DC"])
+                                   "Merchandiser", "UNFI_DC", "Wire_Rack"])
                      .agg(Units=("Unit Sales", "sum"), Dollars=("Net Sales", "sum"),
                           Units_LY=("Unit Sales LY", "sum"), Dollars_LY=("Net Sales LY", "sum"))
                      .reset_index())
@@ -530,7 +548,7 @@ with tab1:
         pivot_raw["OOS"] = pivot_raw["Units"] == 0
 
         store_summary = (pivot_raw.groupby(["Store Name", "Region", "Merchandiser",
-                                            "UNFI_DC"])
+                                            "UNFI_DC", "Wire_Rack"])
                          .agg(Units=("Units", "sum"), Dollars=("Dollars", "sum"),
                               Units_LY=("Units_LY", "sum"),
                               OOS_Count=("OOS", "sum"), Total_Items=("OOS", "count"))
@@ -574,7 +592,7 @@ with tab1:
             return f"{x:+.1f}%" if pd.notna(x) else "n/a"
 
         if show_items:
-            store_tot = disp[["Store Name", "Region", "Merchandiser", "UNFI_DC",
+            store_tot = disp[["Store Name", "Region", "Merchandiser", "UNFI_DC", "Wire_Rack",
                               "Units", "Units_LY", "YoY %", "Dollars",
                               "Avg Unit Vel.", "OOS Rate"]].copy()
             store_tot["Item"] = store_tot["Store Name"]
@@ -592,6 +610,7 @@ with tab1:
                     item_rows.append({
                         "Store Name": store, "Region": ir["Region"],
                         "Merchandiser": ir["Merchandiser"], "UNFI_DC": ir["UNFI_DC"],
+                        "Wire_Rack": ir["Wire_Rack"],
                         "Item": "    " + ir["Item Description"],
                         "Units": ir["Units"], "Units_LY": ir["PY Units"],
                         "YoY %": ir["YoY %"], "Dollars": ir["Dollars"],
@@ -616,13 +635,14 @@ with tab1:
             combined["OOS Rate"] = combined["OOS Rate"].apply(
                 lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else "")
             st.dataframe(
-                combined[["Item", "Region", "UNFI_DC", "Merchandiser", "Units",
+                combined[["Item", "Region", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
                           "PY Units", "YoY %", "Net Sales ($)", "Avg Unit Vel.",
                           "Weeks Since Sale", "OOS", "OOS Rate"]],
                 use_container_width=True, height=520, hide_index=True,
                 column_config={
                     "Item": st.column_config.TextColumn("Store / Item", width=240),
                     "UNFI_DC": st.column_config.TextColumn("UNFI DC", width=130),
+                    "Wire_Rack": st.column_config.TextColumn("Rack Placement", width=110),
                     "Avg Unit Vel.": st.column_config.TextColumn(
                         "Units/Store/SKU/Wk", width=130),
                     "Weeks Since Sale": st.column_config.TextColumn(
@@ -636,11 +656,12 @@ with tab1:
             sd["Avg Unit Vel."] = sd["Avg Unit Vel."].apply(lambda x: f"{x:.2f}")
             sd["OOS Rate"] = sd["OOS Rate"].apply(lambda x: f"{x:.1f}%")
             st.dataframe(
-                sd[["Store Name", "Region", "UNFI_DC", "Merchandiser", "Units",
+                sd[["Store Name", "Region", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
                     "PY Units", "YoY %", "Net Sales ($)", "Avg Unit Vel.", "OOS Rate"]],
                 use_container_width=True, height=480, hide_index=True,
                 column_config={
                     "UNFI_DC": st.column_config.TextColumn("UNFI DC", width=130),
+                    "Wire_Rack": st.column_config.TextColumn("Rack Placement", width=110),
                     "Avg Unit Vel.": st.column_config.TextColumn(
                         "Units/Store/SKU/Wk", width=130)})
 
