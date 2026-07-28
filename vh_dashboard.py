@@ -250,21 +250,21 @@ def render_filter_panel(container, prefix, show_comparison=False):
         sel["cat"] = st.multiselect(
             "Category", sorted(sales["Category"].dropna().unique().tolist()),
             key=f"{prefix}_cat")
-        sel["region"] = st.selectbox(
-            "Region", ["All"] + sorted(sales["Region"].dropna().unique().tolist()),
+        sel["region"] = st.multiselect(
+            "Region", sorted(sales["Region"].dropna().unique().tolist()),
             key=f"{prefix}_region")
         sel["dc"] = st.multiselect(
             "UNFI DC", sorted(sales["UNFI_DC"].dropna().unique().tolist()),
             key=f"{prefix}_dc")
         item_pool = sales if not sel["cat"] else sales[sales["Category"].isin(sel["cat"])]
-        sel["item"] = st.selectbox(
-            "Item", ["All"] + sorted(item_pool["Item Description"].dropna().unique().tolist()),
+        sel["item"] = st.multiselect(
+            "Item", sorted(item_pool["Item Description"].dropna().unique().tolist()),
             key=f"{prefix}_item")
-        sel["merch"] = st.selectbox(
-            "Merchandiser", ["All", "Final Touch", "Basemakers", "Uncovered"],
+        sel["merch"] = st.multiselect(
+            "Merchandiser", ["Final Touch", "Basemakers", "Uncovered"],
             key=f"{prefix}_merch")
-        sel["chan"] = st.selectbox("Channel", ["All", "In-Store", "Online"],
-                                   key=f"{prefix}_chan")
+        sel["chan"] = st.multiselect("Channel", ["In-Store", "Online"],
+                                     key=f"{prefix}_chan")
         sel["rack"] = st.selectbox("Rack Placement", ["All", "Yes", "No"],
                                    key=f"{prefix}_rack")
         if show_comparison:
@@ -295,16 +295,16 @@ def apply_filters(df, sel, include_weeks=True):
             d = d[d["Month_Year"].isin(sel["months"])]
     if sel["cat"]:
         d = d[d["Category"].isin(sel["cat"])]
-    if sel["region"] != "All":
-        d = d[d["Region"] == sel["region"]]
+    if sel["region"]:
+        d = d[d["Region"].isin(sel["region"])]
     if sel["dc"]:
         d = d[d["UNFI_DC"].isin(sel["dc"])]
-    if sel["item"] != "All":
-        d = d[d["Item Description"] == sel["item"]]
-    if sel["merch"] != "All":
-        d = d[d["Merchandiser"] == sel["merch"]]
-    if sel["chan"] != "All":
-        d = d[d["Channel Type"] == sel["chan"]]
+    if sel["item"]:
+        d = d[d["Item Description"].isin(sel["item"])]
+    if sel["merch"]:
+        d = d[d["Merchandiser"].isin(sel["merch"])]
+    if sel["chan"]:
+        d = d[d["Channel Type"].isin(sel["chan"])]
     if sel.get("rack", "All") != "All":
         d = d[d["Wire_Rack"] == sel["rack"]]
     return d
@@ -822,13 +822,13 @@ with tab3:
     with panel3:
         st.markdown('<div class="filter-title">FILTERS — THIS PAGE</div>',
                     unsafe_allow_html=True)
-        p_region = st.selectbox(
-            "Region", ["All"] + sorted(sales["Region"].dropna().unique().tolist()),
+        p_region = st.multiselect(
+            "Region", sorted(sales["Region"].dropna().unique().tolist()),
             key="promo_region")
         p_dc = st.multiselect(
             "UNFI DC", sorted(sales["UNFI_DC"].dropna().unique().tolist()),
             key="promo_dc")
-        p_chan = st.selectbox("Channel", ["All", "In-Store", "Online"], key="promo_chan")
+        p_chan = st.multiselect("Channel", ["In-Store", "Online"], key="promo_chan")
         st.markdown("---")
         st.caption("Promo periods come from the shared **VH x WFM Promo Calendar** "
                    "Google Sheet. Only Confirmed / Live / Completed promos appear.")
@@ -850,12 +850,12 @@ with tab3:
             period_names = periods["Promo_Name"].tolist()
 
             p_sales = sales.copy()
-            if p_region != "All":
-                p_sales = p_sales[p_sales["Region"] == p_region]
+            if p_region:
+                p_sales = p_sales[p_sales["Region"].isin(p_region)]
             if p_dc:
                 p_sales = p_sales[p_sales["UNFI_DC"].isin(p_dc)]
-            if p_chan != "All":
-                p_sales = p_sales[p_sales["Channel Type"] == p_chan]
+            if p_chan:
+                p_sales = p_sales[p_sales["Channel Type"].isin(p_chan)]
 
             def promo_slice(name):
                 row = periods[periods["Promo_Name"] == name].iloc[0]
