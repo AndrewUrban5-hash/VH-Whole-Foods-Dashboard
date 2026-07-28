@@ -544,7 +544,8 @@ with tab1:
 
         pivot_raw = pivot_raw.merge(wks_since, on=["Store Name", "Item Description"],
                                     how="left")
-        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].fillna("OOS")
+        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].apply(
+            lambda x: "OOS" if pd.isna(x) else str(int(x)))
         pivot_raw["OOS"] = pivot_raw["Units"] == 0
 
         store_summary = (pivot_raw.groupby(["Store Name", "Region", "Merchandiser",
@@ -789,7 +790,8 @@ with tab2:
             (broker_item["Units"] / broker_item["Units_LY"] - 1) * 100, np.nan)
         broker_item = broker_item.merge(wks_since,
                                         on=["Store Name", "Item Description"], how="left")
-        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].fillna("OOS")
+        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].apply(
+            lambda x: "OOS" if pd.isna(x) else str(int(x)))
         if b_oos_only:
             broker_item = broker_item[broker_item["OOS"]]
         if b_stale_only:
