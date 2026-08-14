@@ -51,6 +51,15 @@ st.markdown(f"""
                height:100%; min-height:210px; text-align:center; overflow-wrap:anywhere;
                display:flex; flex-direction:column; justify-content:center; }}
   .kpi-row  {{ background:{C_LGRAY}; border-radius:10px; padding:16px 12px; margin-bottom:1rem; }}
+  .kpi-card2 {{ background:{C_WHITE}; border-radius:8px; padding:18px 14px;
+                border-top:4px solid {C_YELLOW}; box-shadow:0 2px 6px rgba(0,0,0,.09);
+                height:100%; min-height:330px; text-align:center; overflow-wrap:anywhere;
+                display:flex; flex-direction:column; justify-content:flex-start; }}
+  .kpi-blk-lbl {{ font-size:10px; font-weight:800; color:{C_DARK}; letter-spacing:.9px;
+                  text-transform:uppercase; }}
+  .kpi-blk-sub {{ font-size:10px; color:#AAA; margin-bottom:8px; line-height:1.3; }}
+  .kpi-blk-cmp {{ font-size:11px; color:#999; margin-top:4px; }}
+  .kpi-div  {{ height:1px; background:{C_MGRAY}; margin:14px 2px 12px; }}
   .kpi-lbl  {{ font-size:12px; font-weight:700; color:#888; text-transform:uppercase;
                letter-spacing:.5px; margin-bottom:8px; }}
   .kpi-val  {{ font-size:36px; font-weight:800; color:{C_DARK}; line-height:1; }}
@@ -275,6 +284,10 @@ def render_filter_panel(container, prefix, show_comparison=False):
             '<div style="font-size:11px;color:#888;font-style:italic;'
             'line-height:1.5;margin-top:14px">'
             '<b>How metrics are calculated:</b><br>'
+            'Each KPI card has two blocks. <b>Latest 4 Weeks</b> is fixed and '
+            'ignores the Week / Month filter. <b>Selected Period</b> follows '
+            'whatever Week Ending / Month you pick. All other filters (category, '
+            'region, DC, item, merchandiser, channel, rack) apply to both blocks.<br>'
             'OOS Rate = % of store/item combinations with 0 units sold in the '
             'selected period.<br>'
             'Weeks Since Sale = weeks since the last recorded unit sale for that '
@@ -348,55 +361,105 @@ with tab1:
 
         cur4_units, cur4_sales_ = cur4["Unit Sales"].sum(), cur4["Net Sales"].sum()
 
-        # Unit & net-sales cards: fixed Latest-4 vs Prior-4 (or PY same 4 wks)
+        # Every card carries TWO blocks:
+        #   STATIC   — fixed latest-4-weeks window; ignores the week/month filter
+        #   SELECTED — driven by whatever Week Ending / Month filter is set
+        # Non-time filters (category, region, DC, item, merchandiser, channel,
+        # rack placement) apply to BOTH blocks.
+        def vcat(df, c): return df[df["Category"] == c]
+        _wk   = lambda n: f"{n} wk{'s' if n != 1 else ''}"
+        _pct  = lambda d, b: (d / b * 100) if b else 0.0
+
+        # ── STATIC block — latest 4 weeks vs prior 4 (or the same 4 weeks LY) ─
+        stat_units, stat_sales = cur4_units, cur4_sales_
+        stat_tort_vel,  stat_tot_vel  = velocity(vcat(cur4, "Tortillas")), velocity(vcat(cur4, "Totopos"))
+        stat_tort_dvel, stat_tot_dvel = (dollar_velocity(vcat(cur4, "Tortillas")),
+                                         dollar_velocity(vcat(cur4, "Totopos")))
         if compare_mode == "Prior Period":
-            base_units, base_sales = prev4["Unit Sales"].sum(), prev4["Net Sales"].sum()
-            cmp_lbl = "vs prior 4 wks"
+            b_units, b_sales = prev4["Unit Sales"].sum(), prev4["Net Sales"].sum()
+            b_tort_vel,  b_tot_vel  = velocity(vcat(prev4, "Tortillas")), velocity(vcat(prev4, "Totopos"))
+            b_tort_dvel, b_tot_dvel = (dollar_velocity(vcat(prev4, "Tortillas")),
+                                       dollar_velocity(vcat(prev4, "Totopos")))
+            stat_cmp = "vs prior 4 wks"
         else:  # Prior Year — same 4 weeks, LY columns
-            base_units, base_sales = cur4["Unit Sales LY"].sum(), cur4["Net Sales LY"].sum()
-            cmp_lbl = "vs same 4 wks LY"
+            b_units, b_sales = cur4["Unit Sales LY"].sum(), cur4["Net Sales LY"].sum()
+            b_tort_vel,  b_tot_vel  = velocity_ly(vcat(cur4, "Tortillas")), velocity_ly(vcat(cur4, "Totopos"))
+            b_tort_dvel, b_tot_dvel = (dollar_velocity_ly(vcat(cur4, "Tortillas")),
+                                       dollar_velocity_ly(vcat(cur4, "Totopos")))
+            stat_cmp = "vs same 4 wks LY"
 
-        delta_units = cur4_units - base_units
-        delta_sales = cur4_sales_ - base_sales
-        pct_units = (delta_units / base_units * 100) if base_units else 0
-        pct_sales = (delta_sales / base_sales * 100) if base_sales else 0
+        d_su, d_ss = stat_units - b_units, stat_sales - b_sales
+        p_su, p_ss = _pct(d_su, b_units), _pct(d_ss, b_sales)
+        d_s_tort_u, d_s_tot_u = stat_tort_vel - b_tort_vel,   stat_tot_vel - b_tot_vel
+        d_s_tort_d, d_s_tot_d = stat_tort_dvel - b_tort_dvel, stat_tot_dvel - b_tot_dvel
 
-        # Velocity cards: reflect the WEEK FILTER selection, averaged per
-        # store / SKU / week (numerator and denominator both scale with the
-        # number of selected weeks, so this stays a true per-week average).
+        # ── SELECTED block — follows the Week Ending / Month filter ───────────
         vsel = filt
         vsel_weeks = sorted(pd.to_datetime(vsel["Week Ending"].unique()))
         n_vsel = len(vsel_weeks)
-        _wk = lambda n: f"{n} wk{'s' if n != 1 else ''}"
-        def vcat(df, c): return df[df["Category"] == c]
 
-        tort_vel  = velocity(vcat(vsel, "Tortillas"))
-        tot_vel   = velocity(vcat(vsel, "Totopos"))
-        tort_dvel = dollar_velocity(vcat(vsel, "Tortillas"))
-        tot_dvel  = dollar_velocity(vcat(vsel, "Totopos"))
-
+        sel_units, sel_sales = vsel["Unit Sales"].sum(), vsel["Net Sales"].sum()
+        sel_tort_vel,  sel_tot_vel  = velocity(vcat(vsel, "Tortillas")), velocity(vcat(vsel, "Totopos"))
+        sel_tort_dvel, sel_tot_dvel = (dollar_velocity(vcat(vsel, "Tortillas")),
+                                       dollar_velocity(vcat(vsel, "Totopos")))
         if compare_mode == "Prior Period":
             # equal-length block of weeks immediately preceding the selection
-            if vsel_weeks:
-                earliest = min(vsel_weeks)
-                prior_weeks = [w for w in ALL_WEEKS if w < earliest][:n_vsel]
-            else:
-                prior_weeks = []
+            prior_weeks = ([w for w in ALL_WEEKS if w < min(vsel_weeks)][:n_vsel]
+                           if vsel_weeks else [])
             vprev = nfilt[nfilt["Week Ending"].isin(prior_weeks)]
-            tort_vel_b  = velocity(vcat(vprev, "Tortillas"))
-            tot_vel_b   = velocity(vcat(vprev, "Totopos"))
-            tort_dvel_b = dollar_velocity(vcat(vprev, "Tortillas"))
-            tot_dvel_b  = dollar_velocity(vcat(vprev, "Totopos"))
-            vel_cmp_lbl = f"vs prior {_wk(n_vsel)}"
+            sb_units, sb_sales = vprev["Unit Sales"].sum(), vprev["Net Sales"].sum()
+            sb_tort_vel,  sb_tot_vel  = velocity(vcat(vprev, "Tortillas")), velocity(vcat(vprev, "Totopos"))
+            sb_tort_dvel, sb_tot_dvel = (dollar_velocity(vcat(vprev, "Tortillas")),
+                                         dollar_velocity(vcat(vprev, "Totopos")))
+            sel_cmp = f"vs prior {_wk(n_vsel)}"
         else:  # Prior Year — same selected weeks, LY columns
-            tort_vel_b  = velocity_ly(vcat(vsel, "Tortillas"))
-            tot_vel_b   = velocity_ly(vcat(vsel, "Totopos"))
-            tort_dvel_b = dollar_velocity_ly(vcat(vsel, "Tortillas"))
-            tot_dvel_b  = dollar_velocity_ly(vcat(vsel, "Totopos"))
-            vel_cmp_lbl = f"vs same {_wk(n_vsel)} LY"
+            sb_units, sb_sales = vsel["Unit Sales LY"].sum(), vsel["Net Sales LY"].sum()
+            sb_tort_vel,  sb_tot_vel  = velocity_ly(vcat(vsel, "Tortillas")), velocity_ly(vcat(vsel, "Totopos"))
+            sb_tort_dvel, sb_tot_dvel = (dollar_velocity_ly(vcat(vsel, "Tortillas")),
+                                         dollar_velocity_ly(vcat(vsel, "Totopos")))
+            sel_cmp = f"vs same {_wk(n_vsel)} LY"
 
-        d_tort_u, d_tot_u = tort_vel - tort_vel_b, tot_vel - tot_vel_b
-        d_tort_d, d_tot_d = tort_dvel - tort_dvel_b, tot_dvel - tot_dvel_b
+        d_lu, d_ls = sel_units - sb_units, sel_sales - sb_sales
+        p_lu, p_ls = _pct(d_lu, sb_units), _pct(d_ls, sb_sales)
+        d_l_tort_u, d_l_tot_u = sel_tort_vel - sb_tort_vel,   sel_tot_vel - sb_tot_vel
+        d_l_tort_d, d_l_tot_d = sel_tort_dvel - sb_tort_dvel, sel_tot_dvel - sb_tot_dvel
+
+        if vsel_weeks:
+            sel_rng = (f"{min(vsel_weeks):%m/%d/%y} – {max(vsel_weeks):%m/%d/%y} · {_wk(n_vsel)}"
+                       if n_vsel > 1 else f"week ending {vsel_weeks[0]:%m/%d/%y}")
+        else:
+            sel_rng = "no weeks match the filter"
+        stat_rng = f"{cur4_wks[-1]:%m/%d/%y} – {cur4_wks[0]:%m/%d/%y} · fixed"
+
+        # ── Card block builders ──────────────────────────────────────────────
+        def _blk_total(tag, rng, val, d, p, cmp_lbl, money):
+            v  = f"${val:,.0f}" if money else f"{val:,.0f}"
+            dv = f"${abs(d):,.0f}" if money else f"{abs(d):,.0f} units"
+            return f"""
+              <div class="kpi-blk-lbl">{tag}</div>
+              <div class="kpi-blk-sub">{rng}</div>
+              <div class="kpi-val" style="font-size:32px">{v}</div>
+              <div class="{delta_class(d)}">{arrow(d)} {dv} ({abs(p):.1f}%) {cmp_lbl}</div>"""
+
+        def _blk_vel(tag, rng, tort, tot, d_tort, d_tot, cmp_lbl, money):
+            f_ = (lambda x: f"${x:,.2f}") if money else (lambda x: f"{x:.2f}")
+            return f"""
+              <div class="kpi-blk-lbl">{tag}</div>
+              <div class="kpi-blk-sub">{rng}</div>
+              <div style="display:flex;justify-content:center;gap:12px;margin:2px 0">
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:#888;font-weight:700">TORTILLAS</div>
+                  <div class="kpi-val" style="font-size:24px">{f_(tort)}</div>
+                  <div class="{delta_class(d_tort)}" style="font-size:12px;margin-top:3px">{arrow(d_tort)} {f_(abs(d_tort))}</div>
+                </div>
+                <div style="width:1px;background:#E0E0E0"></div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:#888;font-weight:700">TOTOPOS</div>
+                  <div class="kpi-val" style="font-size:24px">{f_(tot)}</div>
+                  <div class="{delta_class(d_tot)}" style="font-size:12px;margin-top:3px">{arrow(d_tot)} {f_(abs(d_tot))}</div>
+                </div>
+              </div>
+              <div class="kpi-blk-cmp">{cmp_lbl}</div>"""
 
         st.markdown(f'<div class="sec-hdr">Key Metrics · {compare_mode} comparison</div>',
                     unsafe_allow_html=True)
@@ -405,57 +468,37 @@ with tab1:
 
         with k1:
             st.markdown(f"""
-            <div class="kpi-card">
-              <div class="kpi-lbl">4-Week Unit Sales</div>
-              <div class="kpi-val">{cur4_units:,.0f}</div>
-              <div class="kpi-sub">units sold · latest 4 weeks</div>
-              <div class="{delta_class(delta_units)}">{arrow(delta_units)} {abs(delta_units):,.0f} units ({abs(pct_units):.1f}%) {cmp_lbl}</div>
+            <div class="kpi-card2">
+              <div class="kpi-lbl">Unit Sales</div>
+              {_blk_total("Latest 4 Weeks", stat_rng, stat_units, d_su, p_su, stat_cmp, False)}
+              <div class="kpi-div"></div>
+              {_blk_total("Selected Period", sel_rng, sel_units, d_lu, p_lu, sel_cmp, False)}
             </div>""", unsafe_allow_html=True)
         with k2:
             st.markdown(f"""
-            <div class="kpi-card">
-              <div class="kpi-lbl">4-Week Net Sales</div>
-              <div class="kpi-val">${cur4_sales_:,.0f}</div>
-              <div class="kpi-sub">net revenue · latest 4 weeks</div>
-              <div class="{delta_class(delta_sales)}">{arrow(delta_sales)} ${abs(delta_sales):,.0f} ({abs(pct_sales):.1f}%) {cmp_lbl}</div>
+            <div class="kpi-card2">
+              <div class="kpi-lbl">Net Sales</div>
+              {_blk_total("Latest 4 Weeks", stat_rng, stat_sales, d_ss, p_ss, stat_cmp, True)}
+              <div class="kpi-div"></div>
+              {_blk_total("Selected Period", sel_rng, sel_sales, d_ls, p_ls, sel_cmp, True)}
             </div>""", unsafe_allow_html=True)
         with k3:
             st.markdown(f"""
-            <div class="kpi-card">
+            <div class="kpi-card2">
               <div class="kpi-lbl">Avg Unit Velocity</div>
-              <div style="display:flex;justify-content:center;gap:16px;margin:10px 0 4px">
-                <div style="text-align:center">
-                  <div style="font-size:11px;color:#888;font-weight:600">TORTILLAS</div>
-                  <div class="kpi-val" style="font-size:28px">{tort_vel:.2f}</div>
-                  <div class="{delta_class(d_tort_u)}" style="font-size:13px">{arrow(d_tort_u)} {abs(d_tort_u):.2f} {vel_cmp_lbl}</div>
-                </div>
-                <div style="width:1px;background:#E0E0E0;margin:0 2px"></div>
-                <div style="text-align:center">
-                  <div style="font-size:11px;color:#888;font-weight:600">TOTOPOS</div>
-                  <div class="kpi-val" style="font-size:28px">{tot_vel:.2f}</div>
-                  <div class="{delta_class(d_tot_u)}" style="font-size:13px">{arrow(d_tot_u)} {abs(d_tot_u):.2f} {vel_cmp_lbl}</div>
-                </div>
-              </div>
-              <div class="kpi-sub">units / store / SKU / week · {_wk(n_vsel)} selected</div>
+              {_blk_vel("Latest 4 Weeks", stat_rng, stat_tort_vel, stat_tot_vel, d_s_tort_u, d_s_tot_u, stat_cmp, False)}
+              <div class="kpi-div"></div>
+              {_blk_vel("Selected Period", sel_rng, sel_tort_vel, sel_tot_vel, d_l_tort_u, d_l_tot_u, sel_cmp, False)}
+              <div class="kpi-sub" style="font-size:11px">units / store / SKU / week</div>
             </div>""", unsafe_allow_html=True)
         with k4:
             st.markdown(f"""
-            <div class="kpi-card">
+            <div class="kpi-card2">
               <div class="kpi-lbl">Avg Dollar Velocity</div>
-              <div style="display:flex;justify-content:center;gap:16px;margin:10px 0 4px">
-                <div style="text-align:center">
-                  <div style="font-size:11px;color:#888;font-weight:600">TORTILLAS</div>
-                  <div class="kpi-val" style="font-size:28px">${tort_dvel:.2f}</div>
-                  <div class="{delta_class(d_tort_d)}" style="font-size:13px">{arrow(d_tort_d)} ${abs(d_tort_d):.2f} {vel_cmp_lbl}</div>
-                </div>
-                <div style="width:1px;background:#E0E0E0;margin:0 2px"></div>
-                <div style="text-align:center">
-                  <div style="font-size:11px;color:#888;font-weight:600">TOTOPOS</div>
-                  <div class="kpi-val" style="font-size:28px">${tot_dvel:.2f}</div>
-                  <div class="{delta_class(d_tot_d)}" style="font-size:13px">{arrow(d_tot_d)} ${abs(d_tot_d):.2f} {vel_cmp_lbl}</div>
-                </div>
-              </div>
-              <div class="kpi-sub">$ / store / SKU / week · {_wk(n_vsel)} selected</div>
+              {_blk_vel("Latest 4 Weeks", stat_rng, stat_tort_dvel, stat_tot_dvel, d_s_tort_d, d_s_tot_d, stat_cmp, True)}
+              <div class="kpi-div"></div>
+              {_blk_vel("Selected Period", sel_rng, sel_tort_dvel, sel_tot_dvel, d_l_tort_d, d_l_tot_d, sel_cmp, True)}
+              <div class="kpi-sub" style="font-size:11px">net $ / store / SKU / week</div>
             </div>""", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -544,8 +587,7 @@ with tab1:
 
         pivot_raw = pivot_raw.merge(wks_since, on=["Store Name", "Item Description"],
                                     how="left")
-        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].apply(
-            lambda x: "OOS" if pd.isna(x) else str(int(x)))
+        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].fillna("OOS")
         pivot_raw["OOS"] = pivot_raw["Units"] == 0
 
         store_summary = (pivot_raw.groupby(["Store Name", "Region", "Merchandiser",
@@ -790,8 +832,7 @@ with tab2:
             (broker_item["Units"] / broker_item["Units_LY"] - 1) * 100, np.nan)
         broker_item = broker_item.merge(wks_since,
                                         on=["Store Name", "Item Description"], how="left")
-        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].apply(
-            lambda x: "OOS" if pd.isna(x) else str(int(x)))
+        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].fillna("OOS")
         if b_oos_only:
             broker_item = broker_item[broker_item["OOS"]]
         if b_stale_only:
