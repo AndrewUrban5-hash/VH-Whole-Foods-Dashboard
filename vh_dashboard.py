@@ -145,6 +145,10 @@ def load_data():
     # Remove burritos (no meaningful sales in 2026)
     sales = sales[~sales["Item Description"].str.upper().str.startswith("BURRITO")]
 
+    # Remove discontinued Blue Corn Lime Totopos (replaced by Blue Corn Sea Salt, Apr 2026);
+    # its sell-down tail at ~1 unit/store/wk drags Totopos U/S/W and $/S/W
+    sales = sales[sales["Scan Code"] != 85002589503]
+
     # WFM category names → VH names
     sales["Category"] = sales["Category"].replace(
         {"Flatbreads": "Tortillas", "Salty Snacks": "Totopos"})
