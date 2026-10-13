@@ -127,6 +127,7 @@ def load_data():
                         right_on="Store_Number", how="left")
     sales["UNFI_DC"] = sales["UNFI_DC"].fillna("Unmapped")
     sales["Wire_Rack"] = sales["Wire_Rack"].fillna("No")
+    sales["State"] = sales["State"].fillna("N/A")  # new stores not yet in dim_stores
 
     # Merchandiser flags — Final Touch by store name, Basemakers by store number / name
     ft_names = set(broker[broker["Broker"] == "Final Touch"]["Location_Name"]
@@ -567,7 +568,7 @@ with tab1:
         # ── STORE PERFORMANCE ─────────────────────────────────────────────────
         st.markdown('<div class="sec-hdr">Store Performance</div>', unsafe_allow_html=True)
 
-        pivot_raw = (filt.groupby(["Store Name", "Item Description", "Region",
+        pivot_raw = (filt.groupby(["Store Name", "Item Description", "Region", "State",
                                    "Merchandiser", "UNFI_DC", "Wire_Rack"])
                      .agg(Units=("Unit Sales", "sum"), Dollars=("Net Sales", "sum"),
                           Units_LY=("Unit Sales LY", "sum"), Dollars_LY=("Net Sales LY", "sum"))
@@ -591,10 +592,11 @@ with tab1:
 
         pivot_raw = pivot_raw.merge(wks_since, on=["Store Name", "Item Description"],
                                     how="left")
-        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].fillna("OOS")
+        pivot_raw["Weeks Since Sale"] = pivot_raw["Weeks Since Sale"].apply(
+            lambda x: "OOS" if pd.isna(x) else str(int(x)))  # all-string column (Arrow)
         pivot_raw["OOS"] = pivot_raw["Units"] == 0
 
-        store_summary = (pivot_raw.groupby(["Store Name", "Region", "Merchandiser",
+        store_summary = (pivot_raw.groupby(["Store Name", "Region", "State", "Merchandiser",
                                             "UNFI_DC", "Wire_Rack"])
                          .agg(Units=("Units", "sum"), Dollars=("Dollars", "sum"),
                               Units_LY=("Units_LY", "sum"),
@@ -639,7 +641,7 @@ with tab1:
             return f"{x:+.1f}%" if pd.notna(x) else "n/a"
 
         if show_items:
-            store_tot = disp[["Store Name", "Region", "Merchandiser", "UNFI_DC", "Wire_Rack",
+            store_tot = disp[["Store Name", "Region", "State", "Merchandiser", "UNFI_DC", "Wire_Rack",
                               "Units", "Units_LY", "YoY %", "Dollars",
                               "Avg Unit Vel.", "OOS Rate"]].copy()
             store_tot["Item"] = store_tot["Store Name"]
@@ -655,7 +657,7 @@ with tab1:
                     items = items[items["Weeks Since Sale"].apply(is_stale)]
                 for _, ir in items.iterrows():
                     item_rows.append({
-                        "Store Name": store, "Region": ir["Region"],
+                        "Store Name": store, "Region": ir["Region"], "State": ir["State"],
                         "Merchandiser": ir["Merchandiser"], "UNFI_DC": ir["UNFI_DC"],
                         "Wire_Rack": ir["Wire_Rack"],
                         "Item": "    " + ir["Item Description"],
@@ -682,13 +684,14 @@ with tab1:
             combined["OOS Rate"] = combined["OOS Rate"].apply(
                 lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else "")
             st.dataframe(
-                combined[["Item", "Region", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
+                combined[["Item", "Region", "State", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
                           "PY Units", "YoY %", "Net Sales ($)", "Avg Unit Vel.",
                           "Weeks Since Sale", "OOS", "OOS Rate"]],
                 use_container_width=True, height=520, hide_index=True,
                 column_config={
                     "Item": st.column_config.TextColumn("Store / Item", width=240),
                     "UNFI_DC": st.column_config.TextColumn("UNFI DC", width=130),
+                    "State": st.column_config.TextColumn("State", width=65),
                     "Wire_Rack": st.column_config.TextColumn("Rack Placement", width=110),
                     "Avg Unit Vel.": st.column_config.TextColumn(
                         "Units/Store/SKU/Wk", width=130),
@@ -703,11 +706,12 @@ with tab1:
             sd["Avg Unit Vel."] = sd["Avg Unit Vel."].apply(lambda x: f"{x:.2f}")
             sd["OOS Rate"] = sd["OOS Rate"].apply(lambda x: f"{x:.1f}%")
             st.dataframe(
-                sd[["Store Name", "Region", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
+                sd[["Store Name", "Region", "State", "UNFI_DC", "Wire_Rack", "Merchandiser", "Units",
                     "PY Units", "YoY %", "Net Sales ($)", "Avg Unit Vel.", "OOS Rate"]],
                 use_container_width=True, height=480, hide_index=True,
                 column_config={
                     "UNFI_DC": st.column_config.TextColumn("UNFI DC", width=130),
+                    "State": st.column_config.TextColumn("State", width=65),
                     "Wire_Rack": st.column_config.TextColumn("Rack Placement", width=110),
                     "Avg Unit Vel.": st.column_config.TextColumn(
                         "Units/Store/SKU/Wk", width=130)})
@@ -825,7 +829,7 @@ with tab2:
         with bchk2:
             b_stale_only = st.checkbox("> 2 Wks Since Sale", key="b_stale_only")
 
-        broker_item = (bfilt.groupby(["Store Name", "Item Description", "Region",
+        broker_item = (bfilt.groupby(["Store Name", "Item Description", "Region", "State",
                                       "Merchandiser", "UNFI_DC"])
                        .agg(Units=("Unit Sales", "sum"), Dollars=("Net Sales", "sum"),
                             Units_LY=("Unit Sales LY", "sum"))
@@ -836,7 +840,8 @@ with tab2:
             (broker_item["Units"] / broker_item["Units_LY"] - 1) * 100, np.nan)
         broker_item = broker_item.merge(wks_since,
                                         on=["Store Name", "Item Description"], how="left")
-        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].fillna("OOS")
+        broker_item["Weeks Since Sale"] = broker_item["Weeks Since Sale"].apply(
+            lambda x: "OOS" if pd.isna(x) else str(int(x)))  # all-string column (Arrow)
         if b_oos_only:
             broker_item = broker_item[broker_item["OOS"]]
         if b_stale_only:
@@ -850,7 +855,7 @@ with tab2:
             lambda x: f"{x:+.1f}%" if pd.notna(x) else "n/a")
         broker_item["OOS"] = broker_item["OOS"].apply(lambda x: "Yes" if x else "")
         st.dataframe(
-            broker_item[["Store Name", "Item Description", "Region", "UNFI_DC",
+            broker_item[["Store Name", "Item Description", "Region", "State", "UNFI_DC",
                          "Merchandiser", "Units", "PY Units", "YoY %",
                          "Net Sales ($)", "Weeks Since Sale", "OOS"]],
             use_container_width=True, height=420, hide_index=True,
